@@ -63,10 +63,23 @@ flatten (List []) = []
 -- Problem 8
 -- Remove consecutive duplicates of list elements
 compress :: Eq a => [a] -> [a]
-compress a = compressHelp (tail a) (head a)
+compress [] = []
+compress (x:xs) = compressHelp xs x
   where
     compressHelp :: Eq a => [a] -> a -> [a]
     compressHelp a e
       | null a = [e]
       | e == head a = compressHelp (tail a) (head a)
       | otherwise = e : compressHelp (tail a) (head a)
+
+-- Problem 9
+-- pack consecutive duplicates of list elements into sublists
+pack :: Eq a => [a] -> [[a]]
+pack [] = []
+pack (x:xs) = packHelp xs [x]
+  where
+    packHelp :: Eq a => [a] -> [a] -> [[a]]
+    packHelp list run
+      | null list = [run]
+      | head list == head run = packHelp (tail list) (head list:run)
+      | otherwise = run:packHelp (tail list) [head list]
