@@ -83,3 +83,23 @@ pack (x:xs) = packHelp xs [x]
       | null list = [run]
       | head list == head run = packHelp (tail list) (head list:run)
       | otherwise = run:packHelp (tail list) [head list]
+
+-- Problem 10
+-- record run length of consecutive elements in a list
+encode :: Eq a => [a] -> [(Int, a)]
+encode x = let p = pack x in zip (map length p) (map head p)
+
+-- Problem 11
+-- encode but do not pair elements without consecutive duplicates with
+-- their corresponding '1'
+-- e.g. encode "aaessd" = [(2, a), e, (2,s), d]
+data Encoding a = Multiple Int a | Single a
+encodeModified :: Eq a => [a] -> [Encoding a]
+encodeModified = encodeModifiedHelp . encode
+  where
+    encodeModifiedHelp :: Eq a => [(Int, a)] -> [Encoding a]
+    encodeModifiedHelp [] = []
+    encodeModifiedHelp (x:xs) =
+        if fst x > 1
+          then uncurry Multiple x:encodeModifiedHelp xs
+          else Single (snd x):encodeModifiedHelp xs
