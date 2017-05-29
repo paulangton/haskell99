@@ -103,3 +103,12 @@ encodeModified = encodeModifiedHelp . encode
         if fst x > 1
           then uncurry Multiple x:encodeModifiedHelp xs
           else Single (snd x):encodeModifiedHelp xs
+
+-- Problem 12
+-- Decode a run-length encoded list
+decodeOnce :: Encoding a -> [a]
+decodeOnce (Single x) = [x]
+decodeOnce (Multiple 1 x) = [x]
+decodeOnce (Multiple n x) = x:decodeOnce (Multiple (n-1) x)
+decodeModified :: [Encoding a] -> [a]
+decodeModified x =  foldr (++) [] (map decodeOnce x)
