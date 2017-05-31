@@ -110,5 +110,24 @@ decodeOnce :: Encoding a -> [a]
 decodeOnce (Single x) = [x]
 decodeOnce (Multiple 1 x) = [x]
 decodeOnce (Multiple n x) = x:decodeOnce (Multiple (n-1) x)
+
 decodeModified :: [Encoding a] -> [a]
-decodeModified x =  foldr (++) [] (map decodeOnce x)
+decodeModified x = foldr (++) [] (map decodeOnce x)
+
+-- Problem 13
+-- Run length encoding of a list directly,
+encodeDirect :: Eq a => [a] -> [Encoding a]
+encodeDirect [] = []
+encodeDirect [x] = encodeDirectHelp [] x
+
+encodeDirectHelp :: Eq a => [Encoding a] -> a -> [Encoding a]
+encodeDirectHelp [] c = [(Single c)]
+encodeDirectHelp [(Single c1)] c2 =
+  if c1 == c2
+  then [(Multiple 2 c1)]
+  else encodeDirectHelp [] c2
+encodeDirectHelp [(Multiple n c1)] c2 =
+  if c1 == c2
+  then [(Multiple (n + 1) c2)]
+  else encodeDirectHelp [] c2
+encodeDirectHelp (x:xs) c2 = x:encodeDirectHelp xs c2
