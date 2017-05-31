@@ -119,15 +119,14 @@ decodeModified x = foldr (++) [] (map decodeOnce x)
 encodeDirect :: Eq a => [a] -> [Encoding a]
 encodeDirect [] = []
 encodeDirect [x] = encodeDirectHelp [] x
+encodeDirect (x:xs)
 
-encodeDirectHelp :: Eq a => [Encoding a] -> a -> [Encoding a]
-encodeDirectHelp [] c = [(Single c)]
-encodeDirectHelp [(Single c1)] c2 =
-  if c1 == c2
-  then [(Multiple 2 c1)]
-  else encodeDirectHelp [] c2
+encodeDirectHelp :: Eq a => Encoding a -> a -> [Encoding a]
+encodeDirectHelp (Single c) n =
+  if c == n
+  then [(Multiple 2 c)]
+  else [(Single c), (Single n)]
 encodeDirectHelp [(Multiple n c1)] c2 =
   if c1 == c2
-  then [(Multiple (n + 1) c2)]
-  else encodeDirectHelp [] c2
-encodeDirectHelp (x:xs) c2 = x:encodeDirectHelp xs c2
+  then [(Multiple (n + 1) c1)]
+  else [(Multiple n c1),(Single c2)]
