@@ -121,17 +121,17 @@ encodeDirect x = encodeDirectAcc x []
 
 encodeDirectAcc :: Eq a => [a] -> [Encoding a] -> [Encoding a]
 encodeDirectAcc [] acc = acc
-encodeDirectAcc (x:xs) acc = encodeDirectAcc xs init(acc) ++ encodeDirectHelp last(acc) x
+encodeDirectAcc (x:xs) acc = encodeDirectAcc xs (init acc) ++ encodeDirectHelp (last acc) x
 
 encodeDirectHelp :: Eq a => Encoding a -> a -> [Encoding a]
 encodeDirectHelp (Single c) n =
   if c == n
-  then [(Multiple 2 c)]
-  else [(Single c), (Single n)]
-encodeDirectHelp [(Multiple n c1)] c2 =
+  then [Multiple 2 c]
+  else [Single c, Single n]
+encodeDirectHelp (Multiple n c1) c2 =
   if c1 == c2
-  then [(Multiple (n + 1) c1)]
-  else [(Multiple n c1),(Single c2)]
+  then [Multiple (n + 1) c1]
+  else [Multiple n c1,Single c2]
 
 -- Problem 14
 -- Duplicate the elements of a list
@@ -141,9 +141,9 @@ duplicate (x:xs) = [x,x] ++ duplicate xs
 
 -- Problem 15
 -- Replicate elements in a list a given number of times
-replicateN :: [a] -> n -> [a]
-replicateN (x:xs) num = replicateNOnce x n ++ replicateN xs n
+replicateN :: Eq a => [a] -> Int -> [a]
+replicateN (x:xs) num = replicateNOnce x num ++ replicateN xs num
   where
-    replicateNOnce :: a -> n -> [a]
+    replicateNOnce :: a -> Int -> [a]
     replicateNOnce x 0 = []
-    replicateNOnce x num = [x] ++ replicateNOnce x (num - 1)
+    replicateNOnce x num = x:replicateNOnce x (num - 1)
