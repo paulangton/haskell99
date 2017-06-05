@@ -147,3 +147,41 @@ replicateN (x:xs) num = replicateNOnce x n ++ replicateN xs n
     replicateNOnce :: a -> n -> [a]
     replicateNOnce x 0 = []
     replicateNOnce x num = [x] ++ replicateNOnce x (num - 1)
+
+-- Problem 16
+-- Drop every Nth element of a list
+dropEveryN :: [a] -> Int -> [a]
+dropEveryN x num = dropEveryNHelp x num num
+  where
+    dropEveryNHelp :: [a] -> Int -> Int -> [a]
+    dropEveryNHelp [] _ _ = []
+    dropEveryNHelp (x:xs) num 1 = dropEveryNHelp xs num num
+    dropEveryNHelp (x:xs) num cur = x:dropEveryNHelp xs num (cur - 1)
+
+-- Problem 17
+-- Split a list at position n
+splitAtN :: [a] -> Int -> [[a]]
+splitAtN l pos = splitAtNHelp l pos []
+  where
+    splitAtNHelp :: [a] -> Int -> [a] -> [[a]]
+    splitAtNHelp l pos acc
+      | null l = acc
+      | pos == 0 = acc:splitAtNHelp tail l (-1) []
+      | else splitAtNHelp tail l (pos - 1) head l:acc
+
+-- Problem 18
+-- Extract a slice from a list starting at index i and ending at index k (1-indexed)
+slice :: [a] -> Int -> Int -> [a]
+slice [] _ _ = []
+slice l 0 e = head splitAtN l e
+slice (x:xs) b e = slice xs (b-1) (e-1)
+
+-- Problem 19
+-- Rotate a list n places to the left
+rotateLeft :: [a] -> Int -> [a]
+rotateLeft l num = let split = splitAtN l num in tail split ++ head split
+
+-- Problem 20
+-- Remove the K'th element in a list
+remove :: [a] -> Int -> (a, [a])
+remove l num = let split = splitAtN l num in (last (head split), init (head split) ++ tail split)
