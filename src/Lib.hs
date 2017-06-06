@@ -185,3 +185,31 @@ rotateLeft l num = let split = splitAtN l num in tail split ++ head split
 -- Remove the K'th element in a list
 remove :: [a] -> Int -> (a, [a])
 remove l num = let split = splitAtN l num in (last (head split), init (head split) ++ tail split)
+
+-- Problem 21
+-- Insert an element at a given position into a list
+insertAt :: [a] -> Int -> a -> [a]
+insertAt l pos e = let split = splitAtN l pos in head split ++ e:tail split
+
+-- Problem 22
+-- Create a list containing all integers within a given range
+range :: Int -> Int -> [Int]
+range lo hi
+  | lo == hi = [lo]
+  | lo > hi = error "first number must be less than second"
+  | else let newLo = lo + 1 in lo:range newLo hi
+
+-- Problem 23
+-- Extract a given number of randomly selected elements from the list (repeats allowed)
+randomN :: [a] -> Int -> [a]
+randomN l 0 = []
+-- randomN l n = elementAt TODO l:randomN l (n - 1)
+
+-- Problem 24
+-- Draw n different random numbers from the set 1..m
+randNUnique :: Int -> Int -> [Int]
+randNUnique n m = randNUniqueHelp n [1..m] where
+  randNUniqueHelp :: Int -> [Int] -> [Int]
+  randNUniqueHelp n choices
+  | n == 0 = choices
+  | else let rand = length choices in elementAt rand l:randNUniqueHelp (n - 1) (remove choices rand)
