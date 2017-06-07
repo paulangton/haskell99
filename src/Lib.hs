@@ -222,10 +222,18 @@ randomN l num = do
 
 -- Problem 24
 -- Draw n different random numbers from the set 1..m
--- randNUnique :: Int -> Int -> [Int]
--- randNUnique n m = randNUniqueHelp n [1..m] where
---   randNUniqueHelp :: Int -> [Int] -> [Int]
---   randNUniqueHelp n choices
---     | n == 0 = choices
---     | otherwise = let rand = length choices
---       in elementAt rand choices:(randNUniqueHelp (n - 1) (snd (remove choices rand)))
+randNUnique :: Int -> Int -> IO [Int]
+randNUnique n m = randNUniqueHelp n [1..m] where
+  randNUniqueHelp :: Int -> [Int] -> IO [Int]
+  randNUniqueHelp l num = do
+    x <- randomRIO (0, length l - 1)
+    rest <- randNUniqueHelp (remove x l) (num - 1)
+    return ((l !! x):rest)
+
+-- Problem 25
+-- Generate a random permutation of the elements of a list
+rPermute :: [a] -> IO [a]
+rPermute l = do
+  x <- randomRIO (0, length l - 1)
+  rest <- rPermute (remove x l)
+  return (l !! x):rest
