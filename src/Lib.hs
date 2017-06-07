@@ -4,8 +4,11 @@ module Lib (
       elementAt,
       myLength,
       myReverse,
-      isPalindrome
+      isPalindrome,
+      randomN
     ) where
+
+import System.Random
 
 -- Problem 1
 -- Find the last element of a list
@@ -165,31 +168,41 @@ splitAtN l pos = splitAtNHelp l pos []
   where
     splitAtNHelp :: [a] -> Int -> [a] -> [[a]]
     splitAtNHelp l pos acc
-      | null l = acc
-      | pos == 0 = acc:splitAtNHelp tail l (-1) []
-      | else splitAtNHelp tail l (pos - 1) head l:acc
+      | null l = [acc]
+      | pos == 0 = acc:splitAtNHelp l (-1) []
+      | otherwise = splitAtNHelp (tail l) (pos - 1) (acc ++ [head l])
 
 -- Problem 18
 -- Extract a slice from a list starting at index i and ending at index k (1-indexed)
 slice :: [a] -> Int -> Int -> [a]
 slice [] _ _ = []
-slice l 0 e = head splitAtN l e
+slice l 0 e = head $ splitAtN l e
 slice (x:xs) b e = slice xs (b-1) (e-1)
 
 -- Problem 19
 -- Rotate a list n places to the left
 rotateLeft :: [a] -> Int -> [a]
-rotateLeft l num = let split = splitAtN l num in tail split ++ head split
+rotateLeft l num = let
+  half1 = slice l 0 num
+  half2 = slice l num (length l)
+  in half2 ++ half1
 
 -- Problem 20
 -- Remove the K'th element in a list
 remove :: [a] -> Int -> (a, [a])
-remove l num = let split = splitAtN l num in (last (head split), init (head split) ++ tail split)
+remove l num = let
+  e = elementAt num l
+  half1 = slice l 0 (num-1)
+  half2 = slice l num (length l)
+  in (e, half1 ++ half2)
 
 -- Problem 21
 -- Insert an element at a given position into a list
 insertAt :: [a] -> Int -> a -> [a]
-insertAt l pos e = let split = splitAtN l pos in head split ++ e:tail split
+insertAt l pos e = let
+  half1 = slice l 0 pos
+  half2 = slice l pos (length l)
+  in half1 ++ e:half2
 
 -- Problem 22
 -- Create a list containing all integers within a given range
@@ -197,19 +210,22 @@ range :: Int -> Int -> [Int]
 range lo hi
   | lo == hi = [lo]
   | lo > hi = error "first number must be less than second"
-  | else let newLo = lo + 1 in lo:range newLo hi
+  | otherwise = let newLo = lo + 1 in lo:range newLo hi
 
 -- Problem 23
 -- Extract a given number of randomly selected elements from the list (repeats allowed)
-randomN :: [a] -> Int -> [a]
-randomN l 0 = []
--- randomN l n = elementAt TODO l:randomN l (n - 1)
+randomN :: [a] -> Int -> IO [a]
+randomN l num = do
+  x <- randomRIO (0, length l - 1)
+  rest <- randomN l (num - 1)
+  return ((l !! x):rest)
 
 -- Problem 24
 -- Draw n different random numbers from the set 1..m
-randNUnique :: Int -> Int -> [Int]
-randNUnique n m = randNUniqueHelp n [1..m] where
-  randNUniqueHelp :: Int -> [Int] -> [Int]
-  randNUniqueHelp n choices
-  | n == 0 = choices
-  | else let rand = length choices in elementAt rand l:randNUniqueHelp (n - 1) (remove choices rand)
+-- randNUnique :: Int -> Int -> [Int]
+-- randNUnique n m = randNUniqueHelp n [1..m] where
+--   randNUniqueHelp :: Int -> [Int] -> [Int]
+--   randNUniqueHelp n choices
+--     | n == 0 = choices
+--     | otherwise = let rand = length choices
+--       in elementAt rand choices:(randNUniqueHelp (n - 1) (snd (remove choices rand)))
