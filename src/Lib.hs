@@ -237,3 +237,12 @@ rPermute l = do
   x <- randomRIO (0, length l - 1)
   rest <- rPermute (remove x l)
   return (l !! x):rest
+
+-- Problem 26
+-- Generate the combinations of K distinct objects chosen from the N elements of a list
+combinations :: Int -> [a] -> [[a]]
+combinations _ [] = []
+combinations k (x:xs) = (containsXCombs k x:xs []) ++ combinations k xs
+  where containsXCombs :: Int -> [a] -> [[a]]
+  containsXCombs 1 l = map [] l
+  containsXCombs n (y:ys) = map (y:) containsXCombs n-1 ys
