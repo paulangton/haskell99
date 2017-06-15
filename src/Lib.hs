@@ -9,6 +9,7 @@ module Lib (
     ) where
 
 import System.Random
+import Data.List
 
 -- Problem 1
 -- Find the last element of a list
@@ -244,5 +245,28 @@ combinations :: Int -> [a] -> [[a]]
 combinations _ [] = []
 combinations k (x:xs) = (containsXCombs k x:xs []) ++ combinations k xs
   where containsXCombs :: Int -> [a] -> [[a]]
-  containsXCombs 1 l = map [] l
-  containsXCombs n (y:ys) = map (y:) containsXCombs n-1 ys
+    containsXCombs 1 l = map [] l
+    containsXCombs n (y:ys) = map (y:) containsXCombs n-1 ys
+
+-- Problem 27
+-- a) Write a function that enumerates all possible ways to split a group of 9 people into 3 disjoint subsets of 2, 3, and 4 people
+group3 :: [[[a]]]
+group3 = group3Help []
+  where
+    genSets :: Int -> [a] -> [[a]] -- Generates all possible sets of n (order doesnt matter) from a list
+    genSets n [] = []
+    genSets 1 l = map (:[]) l
+    genSets n (x:xs) =  (map (x:) (genSets (n-1) xs)) ++  genSets n xs
+
+    group3Help :: [[[a]]] -> [[[a]]]
+    group3Help [] = []
+    group3Help x =
+      let
+      l = [1,2,3,4,5,6,7,8,9]
+      set2 = genSets 2 l
+      set3 = genSets 3 l
+      set4 = genSets 4 l
+      in
+      [head (genSets 3 (l \\ (head set2)))]
+
+-- b) generalize the above function to take a list of group sizes
