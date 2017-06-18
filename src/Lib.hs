@@ -248,7 +248,7 @@ combinations k (x:xs) = (containsXCombs k x:xs []) ++ combinations k xs
     containsXCombs 1 l = map [] l
     containsXCombs n (y:ys) = map (y:) containsXCombs n-1 ys
 
--- Problem 27
+-- Problem 27 (counts for 2)
 -- a) Write a function that enumerates all possible ways to split a group of 9 people into 3 disjoint subsets of 2, 3, and 4 people
 -- function that takes a 3 deep array, a number, and a list, and adds
 genSets :: Int -> [a] -> [[a]] -- Generates all possible sets of n (order doesnt matter) from a list
@@ -272,3 +272,45 @@ groupHelp :: [a] -> Int -> [[[a]]] -> [[[a]]]
 groupHelp _ [] acc = acc
 groupHelp l [x] acc = (group3Help x (genSets x l))
 groupHelp l (x:xs) acc = groupHelp l xs (map group3Help x acc)
+
+-- Problem 29 (counts for 2)
+-- Sort a list of lists based on their length
+-- a) sort shorter lists -> longer lists
+lsort :: [[a]] -> [[a]]
+lsort [] = []
+lsort (x:xs) = linsert x $ lsort xs
+  where
+   linsert :: [a] -> [[a]] -> [[a]]
+   linsert e [] = [e]
+   linsert e (y:ys) = if length e > length y then y:linsert e ys else e:y:ys
+
+-- b) Sort the elements of this list of lists according to their length
+-- frequency; i.e., in the default, where sorting is done ascendingly, lists with rare
+-- lengths are placed first, others with a more frequent length come later.
+lfsort :: [[a]] -> [[a]]
+lfsort x = lsort (groupBy lenTest x)
+  where
+    lenTest :: [a] -> [a] -> Bool
+    lenTest x y = length x == length y
+
+-- Problem 31
+-- Determine whether a given integer number is prime
+isPrime :: Int -> Bool
+isPrime x = length (filter (\a -> if x == 2 then True else (mod x a) == 0) [2..ceiling $ sqrt $ fromIntegral x]) == 0
+
+-- Problem 32
+-- Determine the GCD between two positive integers
+myGcd :: Int -> Int -> Int
+myGcd x y | x == y = x
+          | ((isPrime x) && (isPrime y)) = 1
+          | x > y = myGcd (x-y) y
+          | x < y = myGcd x (y-x)
+
+-- Problem 33
+-- Determine whether two positive integer numbers are coprime
+coprime :: Int -> Int -> Bool
+coprime x y = (myGcd x y) == 1
+
+-- Problem 34
+-- Calculate Euler's totient function, defined as the number of positive
+-- integers r (1 <= r < m) that are coprime to m.
