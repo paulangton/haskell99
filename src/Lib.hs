@@ -321,9 +321,13 @@ totient m = length (filter (coprime m) [1..m])
 -- Determine the prime factors of a given positive integer. Construct a flat
 -- list containing the prime factors in ascending order.
 lowDivisor :: Int -> Int
-lowDivisoer
+lowDivisor m = head (filter (0 == mod m) [1..m])
 
 primeFactors :: Int -> [Int]
 primeFactors m
 | isPrime(m) = m
 | otherwise = let divisor = lowDivisor m in divisor:primeFactors(m / divisor)
+
+-- Problem 36
+-- Determine the prime factors of a given positive integer. Construct a list
+-- containing the prime factors and their multiplicity.
