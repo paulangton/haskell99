@@ -314,3 +314,16 @@ coprime x y = (myGcd x y) == 1
 -- Problem 34
 -- Calculate Euler's totient function, defined as the number of positive
 -- integers r (1 <= r < m) that are coprime to m.
+totient :: Int -> Int
+totient m = length (filter (coprime m) [1..m])
+
+-- Problem 35
+-- Determine the prime factors of a given positive integer. Construct a flat
+-- list containing the prime factors in ascending order.
+lowDivisor :: Int -> Int
+lowDivisoer
+
+primeFactors :: Int -> [Int]
+primeFactors m
+| isPrime(m) = m
+| otherwise = let divisor = lowDivisor m in divisor:primeFactors(m / divisor)
