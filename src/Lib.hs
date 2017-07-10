@@ -331,3 +331,45 @@ primeFactors m
 -- Problem 36
 -- Determine the prime factors of a given positive integer. Construct a list
 -- containing the prime factors and their multiplicity.
+primeFactorMultiplicity :: Int -> [(Int, Int)]
+primeFactorMultiplicity = encode $ primeFactors
+
+-- Problem 37
+-- improve the totient function
+-- Let ((p1 m1) (p2 m2) (p3 m3) ...) be the list of prime factors (and their
+-- multiplicities) of a given number m. Then phi(m) can be calculated with the
+-- following formula: (a ** b) is a^b
+--
+-- phi(m) = (p1 - 1) * p1 ** (m1 - 1) *
+--          (p2 - 1) * p2 ** (m2 - 1) *
+--          (p3 - 1) * p3 ** (m3 - 1) * ...
+totientLevelUp :: Int -> Int
+totientLevelUp = foldr (*) [] $ primeFactorMultiplicity m
+  where totientLevelUpHelp :: (Int, Int) -> Int
+  totientLevelUpHelp (p, m) = ((p - 1) * p) ** (m - 1)
+
+-- Problem 38
+-- Compare the two implementations of the totient function
+
+-- Problem 39
+-- Given a range of integers by its lower and upper limit, construct a list of
+-- all prime numbers in that range
+primesInR :: Int -> Int -> [Int]
+primesInR lo hi = filter (isPrime) [lo..hi]
+
+-- Problem 40
+-- Goldbach's conjecture
+-- Goldbach's conjecture says that every positive even number greater than 2 is the
+-- sum of two prime numbers. Write a predicate to find the two prime numbers that
+-- sum to the given even number.
+goldbach :: Int -> (Int, Int)
+goldbach m = let primes = primesInR 2 m in goldbachHelp m primes
+  where goldbachHelp :: [Int] -> Int -> (Int, Int)
+  goldbachHelp [] _ = error "No prime pair found"
+  goldbachHelp p target = let
+  left = head p
+  right = last p
+  in case left + right of
+      == target -> (left, right)
+      < target -> goldbachHelp (tail p) target
+      _ -> goldbachHelp (init p) target
